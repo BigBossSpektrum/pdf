@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Subir archivo PDF</h2>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'pdf_processor:upload_pdf' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Procesar PDF</button>
+    </form>
+
+    {% if form.errors %}
+        <div class="alert alert-danger mt-3">
+            <strong>Errores:</strong>
+            {{ form.errors }}
+        </div>
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'pdf_processor:product_list' %}" class="btn btn-secondary mt-3">Ver productos cargados</a>
+</div>
+{% endblock %}

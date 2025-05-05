@@ -12,7 +12,7 @@ class IndexView(LoginRequiredMixin, View):
     redirect_field_name = 'next'
 
     def get(self, request):
-        return render(request, 'base.html')
+        return render(request, 'processor.html')
 
 class RegisterView(View):
 

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>📊 Reporte de Precios Semanales</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Semana</th>
+      <th>Precio Promedio</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in weekly_data %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.week }}</td>
+      <td>${{ item.avg_price|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

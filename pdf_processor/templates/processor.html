@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Subir PDF</h2>
+<form method="post" enctype="multipart/form-data" action="{% url 'pdf_processor:upload_pdf' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Cargar</button>
+</form>
+
+
+
+
+
+{% endblock content %}
