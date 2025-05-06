@@ -1,7 +1,8 @@
 from django.views import View
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
@@ -31,10 +32,19 @@ class RegisterView(View):
             return redirect('login')
         return render(request, 'register.html', {'form': form})
 
-class CustomLoginView(LoginView):
-    template_name = 'login.html'
-    redirect_authenticated_user = True
-    next_page = reverse_lazy('dashboard')
+def custom_login_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            # Autentica al usuario
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')  # Redirige al home después de un login exitoso
+        else:
+            print("Errores en el formulario:", form.errors)
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 class LogoutView(View):
     def get(self, request):

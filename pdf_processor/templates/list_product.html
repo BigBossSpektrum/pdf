@@ -1,20 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Lista de Productos</h2>
+<h2>📦 Lista de Productos</h2>
 <table border="1">
-    <tr>
-        <th>Nombre</th><th>Modelo</th><th>Descripción</th><th>Tienda</th><th>Precio</th><th>Fecha</th>
-    </tr>
-    {% for p in products %}
-    <tr>
-        <td>{{ p.name }}</td>
-        <td>{{ p.model }}</td>
-        <td>{{ p.description }}</td>
-        <td>{{ p.store }}</td>
-        <td>${{ p.price }}</td>
-        <td>{{ p.uploaded_at }}</td>
-    </tr>
-    {% endfor %}
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Categoría</th>
+            <th>Descripción</th>
+            <th>Tienda</th>
+            <th>Precio</th>
+            <th>Fecha de Subida</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.model }}</td>
+            <td>{{ p.brand }}</td>
+            <td>{{ p.category }}</td>
+            <td>{{ p.description }}</td>
+            <td>{{ p.store }}</td>
+            <td>${{ p.price }}</td>
+            <td>{{ p.uploaded_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock content %}

@@ -88,39 +88,89 @@ def parse_products(text):
     lines = [line.strip() for line in text.split('\n') if line.strip()]
     products = []
 
+    # Lista de marcas conocidas
+    known_brands = [
+        "Samsung", "LG", "Sony", "Lenovo", "Asus",
+        "HP", "Dell", "Acer", "Apple", "Xiaomi",
+        "Motorola", "Huawei", "Canon", "Epson", "Brother"
+    ]
+
+    # Lista de palabras/frases a ignorar
+    blacklist_keywords = {
+        'x', '$', 'promo', 'oferta',
+        'iva', 'iva incluido', 'original',
+        'nuevo', 'nuevo original'
+    }
+
     i = 0
     while i < len(lines):
-        name_candidate = lines[i]
+        name = lines[i]
         price = None
+        brand = ""
+        category = ""
+        model = ""
+        description = ""
 
-        # Filtrar líneas basura
-        if name_candidate.lower() in {'x', '$'} or re.fullmatch(r"\d+", name_candidate):
+        # Filtro de líneas basura
+        if name.lower() in blacklist_keywords or re.fullmatch(r"\d+", name):
             i += 1
             continue
 
-        # Revisa las siguientes líneas por un posible precio
-        for j in range(1, 3):
+        # Buscar precio
+        for j in range(1, 4):
             if i + j < len(lines):
-                candidate = lines[i + j]
-                match = re.search(r"(\d+(?:[\.,]\d{1,2})?)\s*\$?", candidate)
-                if match:
+                line = lines[i + j]
+                if price_match := re.search(
+                    r"(\d+(?:[\.,]\d{1,2})?)\s*\$?", line
+                ):
                     try:
-                        price = float(match.group(1).replace(',', '.'))
+                        price = float(price_match.group(1).replace(',', '.'))
                         i += j + 1
                         break
                     except ValueError:
                         continue
 
-        if price:
+        # Extraer campos adicionales (modelo, descripción, etc.)
+        metadata_limit = 3
+        for k in range(1, metadata_limit + 1):
+            if i + k < len(lines):
+                meta_line = lines[i + k].lower()
+
+                if 'marca:' in meta_line:
+                    brand = meta_line.split('marca:')[-1].strip()
+                elif 'categoría:' in meta_line or 'categoria:' in meta_line:
+                    category = meta_line.split(':')[-1].strip()
+                elif 'modelo:' in meta_line:
+                    model = meta_line.split('modelo:')[-1].strip()
+                elif 'desc:' in meta_line or 'descripcion:' in meta_line:
+                    description = meta_line.split(':')[-1].strip()
+
+        # **Filtrar descripciones**:
+        # Ignorar si la descripción es solo números o tiene menos de 5 caracteres
+        if description and (len(description) < 5 or description.isdigit()):
+            description = ""  # Ignoramos descripciones incorrectas
+
+        # Detección automática de marca si está vacía
+        full_text = f"{name} {description}".lower()
+        if not brand:
+            for b in known_brands:
+                if b.lower() in full_text:
+                    brand = b
+                    break
+
+        if price and description:  # Solo guardamos el producto si tiene precio y una descripción válida
             products.append({
-                'name': name_candidate,
+                'name': name,
                 'price': price,
-                'description': name_candidate,  # Se usa como descripción por ahora
+                'brand': brand or 'Desconocida',
+                'category': category or 'General',
+                'model': model,
+                'description': description or name,
                 'store': 'Manual',
-                'model': ''
             })
-        else:
-            i += 1
+
+        i += 1
 
     print(f"📦 Productos parseados: {len(products)}")
     return products
+

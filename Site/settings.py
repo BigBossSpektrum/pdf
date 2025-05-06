@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import pymysql
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -74,13 +75,23 @@ WSGI_APPLICATION = 'Site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pdf_manager',  # en minúsculas
+        'USER': 'root',
+        'PASSWORD': 'L0sm3j0r3s!',
+        'HOST': 'localhost',
+        'PORT': '3308',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -126,8 +137,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'registration.CustomUser'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # La sesión se borrará al cerrar el navegador
-SESSION_COOKIE_AGE = 3600  # Duración de la sesión en segundos (1 hora)
+SESSION_COOKIE_AGE = 1800  # Duración de la sesión en segundos (30 minutos = 1800)
 SESSION_COOKIE_SECURE = True  # Si usas HTTPS, activa esto
+
+pymysql.install_as_MySQLdb()
