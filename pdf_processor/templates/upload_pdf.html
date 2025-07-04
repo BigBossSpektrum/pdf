@@ -1,24 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Subir archivo PDF</h2>
-
-    <form method="post" enctype="multipart/form-data" action="{% url 'pdf_processor:upload_pdf' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <button type="submit" class="btn btn-primary">Procesar PDF</button>
-    </form>
-
-    {% if form.errors %}
-        <div class="alert alert-danger mt-3">
-            <strong>Errores:</strong>
-            {{ form.errors }}
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow-lg p-4 w-100" style="max-width: 500px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Subir archivo PDF</h2>
         </div>
-    {% endif %}
-
-    <hr>
-    <a href="{% url 'pdf_processor:product_list' %}" class="btn btn-secondary mt-3">Ver productos cargados</a>
+        <form method="post" enctype="multipart/form-data" action="{% url 'pdf_processor:upload_pdf' %}" autocomplete="off">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_pdf_file" class="form-label">Seleccionar uno o varios archivos PDF</label>
+                <input type="file" name="pdf_file" id="id_pdf_file" class="form-control" accept="application/pdf" multiple onclick="this.value=null;" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-block">Procesar PDF(s)</button>
+            </div>
+        </form>
+        {% if form.errors %}
+            <div class="alert alert-danger mt-3">
+                <strong>Errores:</strong>
+                {{ form.errors }}
+            </div>
+        {% endif %}
+        <hr>
+        <a href="{% url 'pdf_processor:product_list' %}" class="btn btn-secondary mt-3 w-100">Ver productos cargados</a>
+    </div>
 </div>
 {% endblock %}

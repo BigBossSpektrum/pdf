@@ -2,15 +2,48 @@
 
 {% block content %}
 
-<h2>Subir PDF</h2>
-<form method="post" enctype="multipart/form-data" action="{% url 'pdf_processor:upload_pdf' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Cargar</button>
-</form>
+<div class="container py-4">
+    <h2 class="fw-bold mb-4">Subir PDF</h2>
 
+    <form method="post" enctype="multipart/form-data" action="{% url 'pdf_processor:upload_pdf' %}" class="mb-5" autocomplete="off">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_pdf_file" class="form-label">Seleccionar uno o varios archivos PDF</label>
+            <input type="file" name="pdf_file" id="id_pdf_file" class="form-control" accept="application/pdf" multiple onclick="this.value=null;" required>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-block">Procesar PDF(s)</button>
+        </div>
+    </form>
+    {% if form.errors %}
+        <div class="alert alert-danger mt-3">
+            <strong>Errores:</strong>
+            {{ form.errors }}
+        </div>
+    {% endif %}
 
-
-
-
+    <h3 class="fw-bold mb-3">PDFs procesados recientemente</h3>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle w-100" style="min-width:600px;">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre de archivo</th>
+                    <th>Fecha de subida</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pdfs %}
+                <tr>
+                    <td>{{ p.filename }}</td>
+                    <td>{{ p.uploaded_at|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted">No hay PDFs procesados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock content %}
